@@ -1,0 +1,73 @@
+import requests
+import tkinter as tk
+from tkinter import *
+from tkinter import messagebox
+
+
+# Function to fetch weather data
+def get_weather():
+    api_key = 'd29e2172a1946a1ad05490ec6aa3c66d'
+    city = city_entry.get()
+
+    if not city:
+        messagebox.showerror("Error", "Please enter a city name")
+        return
+
+    weather_data = requests.get(
+        f"https://api.openweathermap.org/data/2.5/weather?q={city}&units=imperial&APPID={api_key}")
+
+    if weather_data.status_code == 404:
+        messagebox.showerror("Error", "City not found!")
+        return
+
+    weather = weather_data.json()['weather'][0]['main']
+    temp = round(weather_data.json()['main']['temp'])
+    humidity = weather_data.json()['main']['humidity']
+    wind_speed = weather_data.json()['wind']['speed']
+
+    # Update the labels with weather data
+    weather_label.config(text=f"Weather: {weather}")
+    temp_label.config(text=f"Temperature: {temp}ºF")
+    humidity_label.config(text=f"Humidity: {humidity}%")
+    wind_label.config(text=f"Wind Speed: {wind_speed} m/s")
+def main():
+    global city_entry, weather_label, temp_label, humidity_label, wind_label
+
+    root = Tk()
+    root.title("Simple Weather Application")
+    root.geometry("500x500")
+
+
+    # City input
+    city_label = Label(root, text="Enter City:", font=("Arial", 12))
+    city_label.pack(pady=10)
+
+    city_entry = Entry(root, font=("Arial", 12))
+    city_entry.pack(pady=5)
+
+    # Get Weather button
+    get_weather_btn = Button(root, text="Get Weather", command=get_weather, font=("Arial", 12))
+    get_weather_btn.pack(pady=10)
+
+    # Labels to display the weather information
+    weather_label = Label(root, text="", font=("Arial", 12))
+    weather_label.pack(pady=5)
+
+    temp_label = Label(root, text="", font=("Arial", 12))
+    temp_label.pack(pady=5)
+
+    humidity_label = Label(root, text="", font=("Arial", 12))
+    humidity_label.pack(pady=5)
+
+    wind_label = Label(root, text="", font=("Arial", 12))
+    wind_label.pack(pady=5)
+
+    root.mainloop()
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+#This is a protocol of internet
